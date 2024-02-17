@@ -1,0 +1,2 @@
+MENU_FILES_DIR = "menus"
+MENU_FILE_PREFIX = "menu"
