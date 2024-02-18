@@ -1,6 +1,35 @@
+# params item: the item object to create order item from
+def item_order_new(item):
+    return []
+
+# params: item_order - order, menu - menu object to get item object from
+def item_order_item(item_order, menu):
+    pass
+
+
 class OrderSession:
-    def __init__(self):
+    def __init__(self, menu):
         self.ordered = []
+        self.menu = menu
+        self.cached_charge = 0
+
+    # params: item - menu item object
+    def add(self, item, qt=1):
+        io = item_order_new(item)
+        self.ordered.append(item)
+
+    def remove(self, item, qt=1):
+        # TODO:
+        pass
+
+    def get_order_items(self):
+        return []
+
+    def get_order_item_counts(self):
+        return []
+    
+    def get_order_total_charge(self):
+        return 
 
 class ProgramSession:
     # todo: add data to integrate with gui stuff
