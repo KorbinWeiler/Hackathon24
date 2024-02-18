@@ -1,3 +1,5 @@
+import core.file_menus as file_menus
+
 # params item: the item object to create order item from
 def item_order_new(item):
     return []
@@ -5,7 +7,6 @@ def item_order_new(item):
 # params: item_order - order, menu - menu object to get item object from
 def item_order_item(item_order, menu):
     pass
-
 
 class OrderSession:
     def __init__(self, menu):
@@ -48,8 +49,8 @@ class ProgramSession:
         return True
     
     # loads the menu into the memory and is referenced by the program sessions
-    def load_menu(path: str):
-        pass
+    def load_menu(self, menu_name):
+        self.menu = file_menus.load_menu(menu_name)
 
     # returns None if no current order session, returns item order list if current order session
     def get_order_session(self):
