@@ -21,9 +21,7 @@ class GUI:
 
     #Action on button press
     def onClick(height, width, name, price):
-        
-        #print(str((height * 10)-((10-5) * height)+width))
-        if ((height * 10)-((10-5) * height)+width) == 34:
+        if (height * 5) + width == 34:
             box.delete(1.0, END)
         elif name == '':
             pass    
@@ -40,18 +38,20 @@ class GUI:
         #creates size * size buttons
         for i in range(width):
             for j in range(height):
-                if ((i * 10)-((10-height) * i)+j) < len(currentMenu.items):
-                    handler = clickHandler(i,j, currentMenu.items[(i * 10)-((10-height) * i)+j].name, currentMenu.items[(i * 10)-((10-height) * i)+j].price)
-                    button = tk.Button(root, text=str(currentMenu.items[(i * 10)-((10-height) * i)+j].name) ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+                if (i * height) + j < len(currentMenu.items):
+                    handler = clickHandler(i,j, currentMenu.items[(i * height) + j].name, currentMenu.items[(i * height) + j].price)
+                    button = tk.Button(root, text=str(currentMenu.items[(i * height) + j].name) + '\n' + str(currentMenu.items[(i * height) + j].price) ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+                elif (i * height) + j == 34:
+                    handler = clickHandler(i,j)
+                    button = tk.Button(root, text='end order' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 else:
                     handler = clickHandler(i,j)
                     button = tk.Button(root, text='' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 button.config(background="dark blue", fg = 'white')
                 button.grid(column=j, row=i, sticky='nesw')
+
                 #adds new button to the list
                 buttons.append(button)
-                if button['text'] == '34':
-                    button.config(text='end order')
               
         return
     
@@ -93,6 +93,7 @@ class GUI:
         GUI.purchasedItems()
         GUI.total()
         GUI.makeButtons(5, 7)
+        root.resizable(width=False, height=False)
         root.mainloop()
         return
     
