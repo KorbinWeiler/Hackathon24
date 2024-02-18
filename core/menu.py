@@ -4,12 +4,25 @@ class Item:
         self.name = name
         self.price = price
 
+    def print_item(self):
+        print(f"item:{self.name}, price:{self.price}")
+
 class Meal:
     kind = "Meal"
-    def __init__(self, name="", price=0):
-        self.name = name,
+    def __init__(self, name="", price=0, items=None):
+        self.name = name
         self.price = price
-        self.items = []
+        if items is not None:
+            self.items = items
+        else:
+            self.items = []
+
+    def def_items(self, items):
+        self.items = items
+
+    def print_item(self):
+        print(f"item:{self.name}, price:{self.price}, items:{self.items}")
+    
 
 class Menu:
     name = ""
@@ -24,14 +37,18 @@ class Menu:
         self.items.append(new_item)
         return new_item
 
-    def undef_item_byref(self, item):
-        # TODO: handle errors here
-        self.items.remove(item)
-        
-    def undef_item_byname(self, item_name): {}
-        # just do a linear seach for item by name, maybe throw an error if item cannot be 
+    def def_meal(self, name, price):
+        new_meal = Meal(name=name, price=price)
+        self.items.append(new_meal)
+        return new_meal
+
+    def item_from_name(self, name):
+        for item in self.items:
+            if name == item.name:
+                return item
+        return None
+    
 
     def print_items(self):
-        print("listing items of menu " + self.name)
         for item in self.items:
-            print(f'name: {item.name}, price: {item.price}')
+            item.print_item()

@@ -4,31 +4,36 @@ class OrderSession:
     def __init__(self, menu):
         self.ordered = []
         self.menu = menu
-        self.cached_charge = 0
+        self.tracked_charge = 0
 
     # params: item - menu item object
     def add(self, item, qt=1):
-        self.ordered.append(item)
-        self._recalc_total_charge()
+        self.tracked_charge += item.price
+        self._add_rec(item)
+
+    # params: item - menu item object
+    # note: will enter inf recursion if a meal item is cyclicaly pointing to itself
+    def _add_rec(self, item):
+        if item.kind == "Item":
+            self.ordered.append(item)
+        elif item.kind == "Meal":
+            for item_in_meal in item.items:
+                self._add_rec(item_in_meal)
+                
 
     def remove(self, item, qt=1):
         # TODO:
-        self._recalc_total_charge()
+        
         pass
 
     def get_order_items(self):
-        return []
+        return self.ordered
 
     def get_order_item_counts(self):
         return []
     
     def get_order_total_charge(self):
-        return self.cached_charge
-    
-    def _recalc_total_charge(self):
-        self.cached_charge = 0
-        for item in self.ordered:
-            self.cached_charge += item.price
+        return self.tracked_charge
 
 class ProgramSession:
     # todo: add data to integrate with gui stuff
