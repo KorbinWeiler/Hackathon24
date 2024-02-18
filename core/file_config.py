@@ -1,2 +1,2 @@
-MENU_FILES_DIR = "menus"
+MENU_FILES_DIR = "userdata/menus"
 MENU_FILE_PREFIX = "menu"

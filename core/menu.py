@@ -1,26 +1,26 @@
 class Item:
-    name = ""
-    price = 0
-    # todo: add metatadata like item pngs, etc, ...
+    kind = "Item"
+    def __init__(self, name="", price=0):
+        self.name = name
+        self.price = price
 
 class Meal:
-    name = ""
-    price = 0
-    items = []
-    # todo: other metadata
+    kind = "Meal"
+    def __init__(self, name="", price=0):
+        self.name = name,
+        self.price = price
+        self.items = []
 
 class Menu:
     name = ""
-    items = [] # array of Items or Meals
 
     def __init__(self, *, name):
         self.name = name
+        self.items = []
 
     def def_item(self, name, price):
-        new_item = Item()
-        new_item.name = name
-        new_item.price = price
-
+        # TODO: check for repeat item names
+        new_item = Item(name=name, price=price)
         self.items.append(new_item)
         return new_item
 
