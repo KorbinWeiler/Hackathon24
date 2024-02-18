@@ -7,26 +7,30 @@ from core.program import *
 #class to store indexes for each button
 class clickHandler:
 
-    def __init__(self, i,j, itemName ='', itemPrice = 0.0):
+    def __init__(self, i,j, item = None):
         self.i = i
         self.j = j
-        self.itemName = itemName
-        self.itemPrice = itemPrice
+        self.item = item
 
     #calls the onClick function with stored indexes
     def on_click(self):
-        GUI.onClick(self.i, self.j, self.itemName, self.itemPrice)
+        GUI.onClick(self.i, self.j, self.item)
 
 class GUI:
 
     #Action on button press
-    def onClick(height, width, name, price):
+    def onClick(height, width, item):
         if (height * 5) + width == 34:
             box.delete(1.0, END)
-        elif name == '':
+            currentSession.stop_order_session()
+            currentSession.start_order_session()
+        elif item.name == '':
             pass    
         else:
-            box.insert(END, name + ": " + str(price) + "\n")
+            box.insert(END, item.name + ": " + str(item.price) + "\n")
+            currentSession.get_order_session().add(item)
+            total.delete(1.0, END)
+            total.insert(END, "Total: " + str("%.2f") % (currentSession.get_order_session().get_order_total_charge()))
         return
 
     #Populates buttons on the screen
@@ -39,7 +43,7 @@ class GUI:
         for i in range(width):
             for j in range(height):
                 if (i * height) + j < len(currentMenu.items):
-                    handler = clickHandler(i,j, currentMenu.items[(i * height) + j].name, currentMenu.items[(i * height) + j].price)
+                    handler = clickHandler(i,j, currentMenu.items[(i * height) + j])
                     button = tk.Button(root, text=str(currentMenu.items[(i * height) + j].name) + '\n' + str(currentMenu.items[(i * height) + j].price) ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 elif (i * height) + j == 34:
                     handler = clickHandler(i,j)
@@ -63,6 +67,7 @@ class GUI:
         box.insert(END, values)
         
     def total(values=""):
+        global total 
         total = tk.Text(root, width=20,height = 5, padx=1, pady=1)
         total.grid(column = 9, rowspan=2, sticky='nesw')
         total.config(bg='dark blue', fg='white')
@@ -85,8 +90,10 @@ class GUI:
 
     #calls all functions to run the gui
     def guiWrapper():
-        currentSession = ProgramSession()
+        global currentSession 
+        currentSession= ProgramSession()
         currentSession.load_menu("tacobell")
+        currentSession.start_order_session()
         global currentMenu 
         currentMenu = currentSession.get_menu()
         GUI.buildWindow(915, 532, 'menu')
@@ -96,5 +103,3 @@ class GUI:
         root.resizable(width=False, height=False)
         root.mainloop()
         return
-    
-GUI.guiWrapper()
