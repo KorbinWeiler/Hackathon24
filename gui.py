@@ -19,8 +19,11 @@ class GUI:
     #Action on button press
     def onClick(height, width):
         
-        print("column " + str(height + 1) + "; row " + str(width + 1))
-        box.insert(END, str(height + 1) + " " + str(width + 1) + "\n")
+        #print(str((height * 10)-((10-5) * height)+width))
+        if ((height * 10)-((10-5) * height)+width) == 34:
+            box.delete(1.0, END)
+        else:
+            box.insert(END, str((height * 10)-((10-5) * height)+width) + "\n")
         return
 
     #Populates buttons on the screen
@@ -33,12 +36,14 @@ class GUI:
         for i in range(width):
             for j in range(height):
                 handler = clickHandler(i,j)
-                button = tk.Button(root, text='button',width=20, height = 4, command = handler.on_click)
+                button = tk.Button(root, text=str((i * 10)-((10-height) * i)+j) ,width=20, height = 4, command = handler.on_click)
                 button.config(background="dark blue", fg = 'white')
                 button.grid(column=j, row=i, sticky='nesw')
                 #adds new button to the list
                 buttons.append(button)
-                   
+                if button['text'] == '34':
+                    button.config(text='end order')
+              
         return
     
     def purchasedItems(values = ''):
@@ -71,7 +76,7 @@ class GUI:
 
     #calls all functions to run the gui
     def guiWrapper():
-        GUI.buildWindow(915, 532)
+        GUI.buildWindow(915, 532, 'menu')
         GUI.purchasedItems()
         GUI.total()
         GUI.makeButtons(5, 7)
