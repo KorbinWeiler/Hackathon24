@@ -1,3 +1,4 @@
 from gui import *
 
-GUI.guiWrapper()
+window = GUI()
+window.guiWrapper()

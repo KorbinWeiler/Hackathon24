@@ -8,7 +8,11 @@ from core.program import *
 class clickHandler:
 
     #clickerHandler initilizer
-    def __init__(self, i,j, itemList = None, item = None):
+    def __init__(self, i,j, window, session, itemList = None, item = None):
+
+        #declare class method
+        self.window = window
+        self.session = session 
         self.i = i
         self.j = j
         self.item = item
@@ -16,11 +20,18 @@ class clickHandler:
 
     #calls the onClick function with stored indexes
     def on_click(self):
-        GUI.onClick(self.i, self.j, self.itemList, self.item)
+        GUI.onClick(self, self.i, self.j, self.itemList, self.item)
 
 class GUI:
 
-    
+    def __init__(self):
+
+        #declare class members
+        self.root = self.buildWindow(995, 532, 'menu')     
+        self.orderItems = self.purchasedItems()
+        self.orderTotal = self.total()
+        self.session = self.makeSession()
+        self.menu = self.makeMenu()
 
     #List current items
     def listItems(itemList):
@@ -34,12 +45,12 @@ class GUI:
         return
 
     #Action on button press
-    def onClick(height, width, itemList, item):
+    def onClick(self, height, width, itemList, item):
 
         box.insert(END, item.name + ": " + str(item.price) + "\n")
 
         #Add new item into the session
-        currentSession.get_order_session().add(item)
+        self.session.get_order_session().add(item)
 
         #Re-list current items and move text box to show most recent item
         GUI.listItems(itemList)
@@ -47,20 +58,20 @@ class GUI:
 
         #Update order total
         total.delete(1.0, END)
-        total.insert(END, "Total: " + str("%.2f") % (currentSession.get_order_session().get_order_total_charge()))
+        total.insert(END, "Total: " + str("%.2f") % (self.session.get_order_session().get_order_total_charge()))
 
         return
 
-    def end():
+    def end(self):
         #Clear item text box
         box.delete(1.0, END)
 
         #Reset session
-        currentSession.stop_order_session() 
-        currentSession.start_order_session()
+        self.session.stop_order_session() 
+        self.session.start_order_session()
 
     #Populates buttons on the screen
-    def makeButtons(height, width):
+    def makeButtons(self, height, width):
 
         #list of buttons
         buttons = []
@@ -70,13 +81,13 @@ class GUI:
             for j in range(height):
 
                 #checks if button index is within than the current number of items available
-                if (i * height) + j < len(currentMenu.items):
+                if (i * height) + j < len(self.menu.items):
 
                     #Passes current i and j indexes along with new item and current order items
-                    handler = clickHandler(i,j,currentSession.get_order_session().get_order_items(), currentMenu.items[(i * height) + j])
+                    handler = clickHandler(i,j,self.root,self.session, self.session.get_order_session().get_order_items(), self.menu.items[(i * height) + j])
 
                     #Add new button displaying item name and price
-                    button = tk.Button(root, text=str(currentMenu.items[(i * height) + j].name) + '\n' + str(currentMenu.items[(i * height) + j].price) 
+                    button = tk.Button(self.root, text=str(self.menu.items[(i * height) + j].name) + '\n' + str(self.menu.items[(i * height) + j].price) 
                                        ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
 
                 #Checks if it is the last button                       
@@ -84,19 +95,19 @@ class GUI:
 
 
                     #Passes current i and j indexes
-                    handler = clickHandler(i,j)
+                    handler = clickHandler(i,j, self.root,self.session)
 
                     #Adds new button to end order
-                    button = tk.Button(root, text='End Order' ,width=20, height = 4, padx=1, pady=1, command = GUI.end)
+                    button = tk.Button(self.root, text='End Order' ,width=20, height = 4, padx=1, pady=1, command = self.end)
 
                 #Not a valid item
                 else:
 
                     #Passes current i and j indexes
-                    handler = clickHandler(i,j)
+                    handler = clickHandler(i,j, self.root,self.session)
 
                     #Adds a new blank button
-                    button = tk.Button(root, text='' ,width=20, height = 4, padx=1, pady=1)
+                    button = tk.Button(self.root, text='' ,width=20, height = 4, padx=1, pady=1)
 
                 #Connects all buttons and changes their color to dark blue with white text
                 button.config(background="dark blue", fg = 'white')
@@ -107,47 +118,47 @@ class GUI:
               
         return
     
-    def purchasedItems(values = ''):
+    def purchasedItems(self,values = ''):
         global box
-        box = tk.Text(root, width=30, padx=1, pady=1)
+        box = tk.Text(self.root, width=30, padx=1, pady=1)
         box.grid(column=9,rowspan=5,sticky='nesw')
         box.config(bg="dark blue", fg='white')
         box.insert(END, values)
         
-    def total(values=""):
+    def total(self, values=""):
         global total 
-        total = tk.Text(root, width=30,height = 5, padx=1, pady=1)
+        total = tk.Text(self.root, width=30,height = 5, padx=1, pady=1)
         total.grid(column = 9, rowspan=2, sticky='nesw')
         total.config(bg='dark blue', fg='white')
         total.insert(END, values)
 
     #Draws the window
-    def buildWindow(width = 512, height = 512, name = "default"):
-        global windowHeight
-        global windowWidth
-        windowHeight = height
-        windowWidth = width
+    def buildWindow(self, width = 512, height = 512, name = "default"):
 
         #window setup
-        global root
         root = Tk(className=name)
         root.config(bg='#08103d')
-        root.geometry(str(windowWidth)+"x"+str(windowHeight))
+        root.geometry(str(width)+"x"+str(height))
         root.grid()
-        return
+        return root
+    
+    def makeSession(self):
+        session= ProgramSession()
+        session.load_menu("tacobell")
+        session.start_order_session()
+        return session
+
+    def makeMenu(self):
+        menu = self.session.get_menu()
+        return menu
 
     #calls all functions to run the gui
-    def guiWrapper():
-        global currentSession 
-        currentSession= ProgramSession()
-        currentSession.load_menu("tacobell")
-        currentSession.start_order_session()
-        global currentMenu 
-        currentMenu = currentSession.get_menu()
-        GUI.buildWindow(995, 532, 'menu')
-        GUI.purchasedItems()
-        GUI.total()
-        GUI.makeButtons(5, 7)
-        root.resizable(width=False, height=False)
-        root.mainloop()
+    def guiWrapper(self):
+        
+        #GUI.buildWindow(995, 532, 'menu')
+        #GUI.purchasedItems()
+        #GUI.total()
+        GUI.makeButtons(self, 5, 7)
+        self.root.resizable(width=False, height=False)
+        self.root.mainloop()
         return
