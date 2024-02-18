@@ -20,6 +20,8 @@ class clickHandler:
 
 class GUI:
 
+    
+
     #List current items
     def listItems(itemList):
 
@@ -34,35 +36,28 @@ class GUI:
     #Action on button press
     def onClick(height, width, itemList, item):
 
-        #check if the "End Order" button is pressed
-        if (height * 5) + width == 34:
+        box.insert(END, item.name + ": " + str(item.price) + "\n")
 
-            #Clear item text box
-            box.delete(1.0, END)
+        #Add new item into the session
+        currentSession.get_order_session().add(item)
 
-            #Reset session
-            currentSession.stop_order_session() 
-            currentSession.start_order_session()
+        #Re-list current items and move text box to show most recent item
+        GUI.listItems(itemList)
+        box.see("end")
 
-        #Invalid input
-        elif item == None:
-            pass 
-
-        #Valid item is entered   
-        else:
-
-            #Add new item into the session
-            currentSession.get_order_session().add(item)
-
-            #Re-list current items and move text box to show most recent item
-            GUI.listItems(itemList)
-            box.see("end")
-
-            #Update order total
-            total.delete(1.0, END)
-            total.insert(END, "Total: " + str("%.2f") % (currentSession.get_order_session().get_order_total_charge()))
+        #Update order total
+        total.delete(1.0, END)
+        total.insert(END, "Total: " + str("%.2f") % (currentSession.get_order_session().get_order_total_charge()))
 
         return
+
+    def end():
+        #Clear item text box
+        box.delete(1.0, END)
+
+        #Reset session
+        currentSession.stop_order_session() 
+        currentSession.start_order_session()
 
     #Populates buttons on the screen
     def makeButtons(height, width):
@@ -77,15 +72,33 @@ class GUI:
                 #checks if button index is within than the current number of items available
                 if (i * height) + j < len(currentMenu.items):
 
-                    #Enter 
+                    #Passes current i and j indexes along with new item and current order items
                     handler = clickHandler(i,j,currentSession.get_order_session().get_order_items(), currentMenu.items[(i * height) + j])
-                    button = tk.Button(root, text=str(currentMenu.items[(i * height) + j].name) + '\n' + str(currentMenu.items[(i * height) + j].price) ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+
+                    #Add new button displaying item name and price
+                    button = tk.Button(root, text=str(currentMenu.items[(i * height) + j].name) + '\n' + str(currentMenu.items[(i * height) + j].price) 
+                                       ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+
+                #Checks if it is the last button                       
                 elif (i * height) + j == 34:
-                    handler = clickHandler(i,j,currentSession.get_order_session().get_order_items())
-                    button = tk.Button(root, text='End Order' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+
+
+                    #Passes current i and j indexes
+                    handler = clickHandler(i,j)
+
+                    #Adds new button to end order
+                    button = tk.Button(root, text='End Order' ,width=20, height = 4, padx=1, pady=1, command = GUI.end)
+
+                #Not a valid item
                 else:
-                    handler = clickHandler(i,j,currentSession.get_order_session().get_order_items())
-                    button = tk.Button(root, text='' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+
+                    #Passes current i and j indexes
+                    handler = clickHandler(i,j)
+
+                    #Adds a new blank button
+                    button = tk.Button(root, text='' ,width=20, height = 4, padx=1, pady=1)
+
+                #Connects all buttons and changes their color to dark blue with white text
                 button.config(background="dark blue", fg = 'white')
                 button.grid(column=j, row=i, sticky='nesw')
 
