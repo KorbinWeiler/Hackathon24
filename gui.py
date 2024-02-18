@@ -2,28 +2,33 @@ from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 from math import floor
+from core.program import *
 
 #class to store indexes for each button
 class clickHandler:
 
-    def __init__(self, i,j):
+    def __init__(self, i,j, itemName ='', itemPrice = 0.0):
         self.i = i
         self.j = j
+        self.itemName = itemName
+        self.itemPrice = itemPrice
 
     #calls the onClick function with stored indexes
     def on_click(self):
-        GUI.onClick(self.i, self.j)
+        GUI.onClick(self.i, self.j, self.itemName, self.itemPrice)
 
 class GUI:
 
     #Action on button press
-    def onClick(height, width):
+    def onClick(height, width, name, price):
         
         #print(str((height * 10)-((10-5) * height)+width))
         if ((height * 10)-((10-5) * height)+width) == 34:
             box.delete(1.0, END)
+        elif name == '':
+            pass    
         else:
-            box.insert(END, str((height * 10)-((10-5) * height)+width) + "\n")
+            box.insert(END, name + ": " + str(price) + "\n")
         return
 
     #Populates buttons on the screen
@@ -35,8 +40,12 @@ class GUI:
         #creates size * size buttons
         for i in range(width):
             for j in range(height):
-                handler = clickHandler(i,j)
-                button = tk.Button(root, text=str((i * 10)-((10-height) * i)+j) ,width=20, height = 4, command = handler.on_click)
+                if ((i * 10)-((10-height) * i)+j) < len(currentMenu.items):
+                    handler = clickHandler(i,j, currentMenu.items[(i * 10)-((10-height) * i)+j].name, currentMenu.items[(i * 10)-((10-height) * i)+j].price)
+                    button = tk.Button(root, text=str(currentMenu.items[(i * 10)-((10-height) * i)+j].name) ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+                else:
+                    handler = clickHandler(i,j)
+                    button = tk.Button(root, text='' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 button.config(background="dark blue", fg = 'white')
                 button.grid(column=j, row=i, sticky='nesw')
                 #adds new button to the list
@@ -76,6 +85,10 @@ class GUI:
 
     #calls all functions to run the gui
     def guiWrapper():
+        currentSession = ProgramSession()
+        currentSession.load_menu("tacobell")
+        global currentMenu 
+        currentMenu = currentSession.get_menu()
         GUI.buildWindow(915, 532, 'menu')
         GUI.purchasedItems()
         GUI.total()
