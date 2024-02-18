@@ -31,6 +31,7 @@ class GUI:
             currentSession.get_order_session().add(item)
             total.delete(1.0, END)
             total.insert(END, "Total: " + str("%.2f") % (currentSession.get_order_session().get_order_total_charge()))
+            box.see("end")
         return
 
     #Populates buttons on the screen
@@ -61,14 +62,14 @@ class GUI:
     
     def purchasedItems(values = ''):
         global box
-        box = tk.Text(root, width=20, padx=1, pady=1)
+        box = tk.Text(root, width=30, padx=1, pady=1)
         box.grid(column=9,rowspan=5,sticky='nesw')
         box.config(bg="dark blue", fg='white')
         box.insert(END, values)
         
     def total(values=""):
         global total 
-        total = tk.Text(root, width=20,height = 5, padx=1, pady=1)
+        total = tk.Text(root, width=30,height = 5, padx=1, pady=1)
         total.grid(column = 9, rowspan=2, sticky='nesw')
         total.config(bg='dark blue', fg='white')
         total.insert(END, values)
@@ -96,7 +97,7 @@ class GUI:
         currentSession.start_order_session()
         global currentMenu 
         currentMenu = currentSession.get_menu()
-        GUI.buildWindow(915, 532, 'menu')
+        GUI.buildWindow(995, 532, 'menu')
         GUI.purchasedItems()
         GUI.total()
         GUI.makeButtons(5, 7)
