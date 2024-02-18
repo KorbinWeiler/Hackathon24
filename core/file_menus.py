@@ -8,14 +8,14 @@ import core.menu as menu
 FFORMAT_QUOTE_CHAR = '"'
 FFORMAT_DELIMITER = ','
 
+def get_menu_dir_path():
+    return core.file_config.MENU_FILES_DIR
+
 def get_menu_path(menu_name):
     return core.file_config.MENU_FILES_DIR + '/' + menu_name + '.menu'
 
-# todo: add an option to use exact path and open up prompts to choose paths
-def load_menu(menu_name: str):
-    menu_data = core.menu.Menu(name="") # will extract the name data later
-    menu_path = get_menu_path(menu_name)
-
+def load_menu_from_path(menu_path: str):
+    menu_data = core.menu.Menu(name="")
     with open(menu_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f, delimiter=FFORMAT_DELIMITER, quotechar=FFORMAT_QUOTE_CHAR, skipinitialspace=True)
         name_row = next(reader)
@@ -56,6 +56,12 @@ def load_menu(menu_name: str):
             meal_data.def_items(meal_items)
 
     return menu_data
+
+# todo: add an option to use exact path and open up prompts to choose paths
+def load_menu(menu_name: str):
+    menu_data = core.menu.Menu(name="") # will extract the name data later
+    menu_path = get_menu_path(menu_name)
+    return load_menu_from_path(menu_path)
 
 # def save_menu(menu_data):
 #     menu_path = get_menu_path(menu_data.name)
