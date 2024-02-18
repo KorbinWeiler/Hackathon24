@@ -7,31 +7,61 @@ from core.program import *
 #class to store indexes for each button
 class clickHandler:
 
-    def __init__(self, i,j, item = None):
+    #clickerHandler initilizer
+    def __init__(self, i,j, itemList = None, item = None):
         self.i = i
         self.j = j
         self.item = item
+        self.itemList = itemList
 
     #calls the onClick function with stored indexes
     def on_click(self):
-        GUI.onClick(self.i, self.j, self.item)
+        GUI.onClick(self.i, self.j, self.itemList, self.item)
 
 class GUI:
 
+    #List current items
+    def listItems(itemList):
+
+        #reset listed items
+        box.delete(1.0, END)
+
+        #iterate through current order items list, and write names and prices to the text box
+        for items in itemList:
+            box.insert(END, items.name + ": " + str(items.price) + "\n")
+        return
+
     #Action on button press
-    def onClick(height, width, item):
+    def onClick(height, width, itemList, item):
+
+        #check if the "End Order" button is pressed
         if (height * 5) + width == 34:
+
+            #Clear item text box
             box.delete(1.0, END)
-            currentSession.stop_order_session()
+
+            #Reset session
+            currentSession.stop_order_session() 
             currentSession.start_order_session()
-        elif item.name == '':
-            pass    
+
+        #Invalid input
+        elif item == None:
+            pass 
+
+        #Valid item is entered   
         else:
-            box.insert(END, item.name + ": " + str(item.price) + "\n")
+
+            #Add new item into the session
             currentSession.get_order_session().add(item)
+
+            #Re-list current items and move text box to show most recent item
+            GUI.listItems(itemList)
+            box.see("end")
+
+            #Update order total
             total.delete(1.0, END)
             total.insert(END, "Total: " + str("%.2f") % (currentSession.get_order_session().get_order_total_charge()))
-            box.see("end")
+
         return
 
     #Populates buttons on the screen
@@ -40,17 +70,21 @@ class GUI:
         #list of buttons
         buttons = []
 
-        #creates size * size buttons
+        #creates width * height buttons
         for i in range(width):
             for j in range(height):
+
+                #checks if button index is within than the current number of items available
                 if (i * height) + j < len(currentMenu.items):
-                    handler = clickHandler(i,j, currentMenu.items[(i * height) + j])
+
+                    #Enter 
+                    handler = clickHandler(i,j,currentSession.get_order_session().get_order_items(), currentMenu.items[(i * height) + j])
                     button = tk.Button(root, text=str(currentMenu.items[(i * height) + j].name) + '\n' + str(currentMenu.items[(i * height) + j].price) ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 elif (i * height) + j == 34:
-                    handler = clickHandler(i,j)
-                    button = tk.Button(root, text='end order' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
+                    handler = clickHandler(i,j,currentSession.get_order_session().get_order_items())
+                    button = tk.Button(root, text='End Order' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 else:
-                    handler = clickHandler(i,j)
+                    handler = clickHandler(i,j,currentSession.get_order_session().get_order_items())
                     button = tk.Button(root, text='' ,width=20, height = 4, padx=1, pady=1, command = handler.on_click)
                 button.config(background="dark blue", fg = 'white')
                 button.grid(column=j, row=i, sticky='nesw')
