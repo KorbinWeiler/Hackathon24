@@ -140,6 +140,7 @@ class GUI:
         root.config(bg='#08103d')
         root.geometry(str(width)+"x"+str(height))
         root.grid()
+        self.root.resizable(width=False, height=False)
         return root
     
     def makeSession(self):
@@ -155,10 +156,6 @@ class GUI:
     #calls all functions to run the gui
     def guiWrapper(self):
         
-        #GUI.buildWindow(995, 532, 'menu')
-        #GUI.purchasedItems()
-        #GUI.total()
         GUI.makeButtons(self, 5, 7)
-        self.root.resizable(width=False, height=False)
         self.root.mainloop()
         return
