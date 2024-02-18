@@ -33,25 +33,24 @@ class GUI:
         for i in range(width):
             for j in range(height):
                 handler = clickHandler(i,j)
-                button = tk.Button(root, text=str((i * 10)-((10-height) * i)+j), height = 5, width=10,
-                                command = handler.on_click)
-                button.grid(column=j,row=i, padx=1, pady=1)
+                button = tk.Button(root, text='button',width=20, height = 4, command = handler.on_click)
                 button.config(background="dark blue", fg = 'white')
-            
+                button.grid(column=j, row=i, sticky='nesw')
                 #adds new button to the list
-                buttons.append(button)      
+                buttons.append(button)
+                   
         return
     
     def purchasedItems(values = ''):
         global box
         box = tk.Text(root, width=20, padx=1, pady=1)
-        box.grid(column=7, rowspan=9, sticky='ne')
+        box.grid(column=9,rowspan=5,sticky='nesw')
         box.config(bg="dark blue", fg='white')
         box.insert(END, values)
         
     def total(values=""):
-        total = tk.Text(root, width=20, padx=1, pady=1)
-        total.grid(column=7, rowspan=2, sticky='ne')
+        total = tk.Text(root, width=20,height = 5, padx=1, pady=1)
+        total.grid(column = 9, rowspan=2, sticky='nesw')
         total.config(bg='dark blue', fg='white')
         total.insert(END, values)
 
@@ -72,10 +71,10 @@ class GUI:
 
     #calls all functions to run the gui
     def guiWrapper():
-        GUI.buildWindow(1024,1024)
+        GUI.buildWindow(915, 532)
         GUI.purchasedItems()
         GUI.total()
-        GUI.makeButtons(6, 8)
+        GUI.makeButtons(5, 7)
         root.mainloop()
         return
     
