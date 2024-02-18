@@ -1,13 +1,5 @@
 import core.file_menus as file_menus
 
-# params item: the item object to create order item from
-def item_order_new(item):
-    return []
-
-# params: item_order - order, menu - menu object to get item object from
-def item_order_item(item_order, menu):
-    pass
-
 class OrderSession:
     def __init__(self, menu):
         self.ordered = []
@@ -16,11 +8,12 @@ class OrderSession:
 
     # params: item - menu item object
     def add(self, item, qt=1):
-        io = item_order_new(item)
         self.ordered.append(item)
+        self._recalc_total_charge()
 
     def remove(self, item, qt=1):
         # TODO:
+        self._recalc_total_charge()
         pass
 
     def get_order_items(self):
@@ -31,6 +24,11 @@ class OrderSession:
     
     def get_order_total_charge(self):
         return self.cached_charge
+    
+    def _recalc_total_charge(self):
+        self.cached_charge = 0
+        for item in self.ordered:
+            self.cached_charge += item.price
 
 class ProgramSession:
     # todo: add data to integrate with gui stuff
@@ -41,7 +39,7 @@ class ProgramSession:
     def start_order_session(self):
         if self.order_session is not None:
             return False
-        self.order_session = OrderSession()
+        self.order_session = OrderSession(self.menu)
         return True
 
     def stop_order_session(self):

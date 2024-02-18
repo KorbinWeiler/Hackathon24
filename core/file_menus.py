@@ -27,7 +27,7 @@ def load_menu(menu_name: str):
             assert item_kind is not None, "in menu-file item row, missing item kind field."
             item_name = item_row[1]
             assert item_name is not None, "in menu-file item row, missing item name field."
-            item_price = item_row[2]
+            item_price = float(item_row[2])
             assert item_price is not None, "in menu-file item row, missing item price field."
 
             if item_kind == "I":    # item kind, corresponds to single item
