@@ -55,6 +55,10 @@ class ProgramSession:
     def load_menu(self, menu_name):
         self.menu = file_menus.load_menu(menu_name)
 
+    # loads menu into memory, directly from path
+    def load_menu_from_path(self, menu_path):
+        self.menu = file_menus.load_menu_from_path(menu_path)
+
     # returns None if no current order session, returns item order list if current order session
     def get_order_session(self):
         return self.order_session

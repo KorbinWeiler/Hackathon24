@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
+import tkinter.filedialog as filedialog
+
 from math import floor
 from core.program import *
 
@@ -25,6 +27,8 @@ class clickHandler:
 class GUI:
 
     def __init__(self):
+        self.init_load_menu_path = None
+        self.init_load_menu_path = filedialog.askopenfilename(initialdir=file_menus.get_menu_dir_path)
 
         #declare class members
         self.root = self.buildWindow(995, 532, 'menu')     
@@ -140,12 +144,15 @@ class GUI:
         root.config(bg='#08103d')
         root.geometry(str(width)+"x"+str(height))
         root.grid()
-        self.root.resizable(width=False, height=False)
+        root.resizable(width=False, height=False)
         return root
     
     def makeSession(self):
         session= ProgramSession()
-        session.load_menu("tacobell")
+        if self.init_load_menu_path:
+            session.load_menu_from_path(self.init_load_menu_path)
+        else:
+            session.load_menu("tacobell")
         session.start_order_session()
         return session
 
@@ -156,6 +163,6 @@ class GUI:
     #calls all functions to run the gui
     def guiWrapper(self):
         
-        GUI.makeButtons(self, 5, 7)
+        self.makeButtons(5, 7)
         self.root.mainloop()
         return
