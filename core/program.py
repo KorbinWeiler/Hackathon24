@@ -29,7 +29,7 @@ class OrderSession:
         return []
     
     def get_order_total_charge(self):
-        return 
+        return self.cached_charge
 
 class ProgramSession:
     # todo: add data to integrate with gui stuff
