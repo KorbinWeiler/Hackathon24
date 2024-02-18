@@ -3,11 +3,24 @@ from tkinter import ttk
 import tkinter as tk
 from math import floor
 
+#class to store indexes for each button
+class clickHandler:
+
+    def __init__(self, i,j):
+        self.i = i
+        self.j = j
+
+    #calls the onClick function with stored indexes
+    def on_click(self):
+        GUI.onClick(self.i, self.j)
+
 class GUI:
 
     #Action on button press
-    def onClick(position):
-        print("botton!")
+    def onClick(height, width):
+        
+        print("column " + str(height + 1) + "; row " + str(width + 1))
+        box.insert(END, str(height + 1) + " " + str(width + 1) + "\n")
         return
 
     #Populates buttons on the screen
@@ -19,8 +32,9 @@ class GUI:
         #creates size * size buttons
         for i in range(width):
             for j in range(height):
-                button = tk.Button(root, text=str((i * 10)-((10-height) * i)+j), height = 2, width=floor(windowWidth / (width * 4)),
-                                command=lambda i=i: GUI.onClick(i))
+                handler = clickHandler(i,j)
+                button = tk.Button(root, text=str((i * 10)-((10-height) * i)+j), height = 5, width=10,
+                                command = handler.on_click)
                 button.grid(column=j,row=i, padx=1, pady=1)
                 button.config(background="dark blue", fg = 'white')
             
@@ -28,15 +42,16 @@ class GUI:
                 buttons.append(button)      
         return
     
-    def purchasedItems(values="nothing"):
+    def purchasedItems(values = ''):
+        global box
         box = tk.Text(root, width=20, padx=1, pady=1)
-        box.grid(column=5, rowspan=9, sticky='ne')
+        box.grid(column=7, rowspan=9, sticky='ne')
         box.config(bg="dark blue", fg='white')
         box.insert(END, values)
         
-    def total(values="nothing"):
-        total = tk.Text(root, height=5, width=20, padx=1, pady=1)
-        total.grid(column=5, rowspan=2, sticky='e')
+    def total(values=""):
+        total = tk.Text(root, width=20, padx=1, pady=1)
+        total.grid(column=7, rowspan=2, sticky='ne')
         total.config(bg='dark blue', fg='white')
         total.insert(END, values)
 
@@ -60,7 +75,7 @@ class GUI:
         GUI.buildWindow(1024,1024)
         GUI.purchasedItems()
         GUI.total()
-        GUI.makeButtons(4, 11)
+        GUI.makeButtons(6, 8)
         root.mainloop()
         return
     
