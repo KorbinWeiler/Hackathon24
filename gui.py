@@ -45,19 +45,19 @@ class GUI:
 
         #iterate through current order items list, and write names and prices to the text box
         for items in itemList:
-            box.insert(END, items.name + ": " + str(items.price) + "\n")
+            box.insert(END, items.name  + "\n")
         return
 
     #Action on button press
     def onClick(self, height, width, itemList, item):
 
-        box.insert(END, item.name + ": " + str(item.price) + "\n")
+        box.insert(END, item.name + "\n")
 
         #Add new item into the session
         self.session.get_order_session().add(item)
 
         #Re-list current items and move text box to show most recent item
-        GUI.listItems(itemList)
+        GUI.listItems(self.session.get_order_session().get_order_items())
         box.see("end")
 
         #Update order total
@@ -108,7 +108,7 @@ class GUI:
                 else:
 
                     #Passes current i and j indexes
-                    handler = clickHandler(i,j, self.root,self.session)
+                    handler = clickHandler(i,j, self.root,self.session, self.session.get_order_session().get_order_items())
 
                     #Adds a new blank button
                     button = tk.Button(self.root, text='' ,width=20, height = 4, padx=1, pady=1)
